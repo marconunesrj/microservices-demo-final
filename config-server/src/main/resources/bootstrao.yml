@@ -1,0 +1,27 @@
+# O arquivo bootstrap.yml é carregado antes do application.yml.
+# Utilizado para obter as configurações que estão no config-server-repository no github
+spring:
+  application:
+    name: configserver
+  cloud:
+    config:
+      server:
+        git:
+          # Acessando Local
+#          uri: C:\Cursos\event_driven_microservices_spring_boot_kafka_elastic\microservices-demo-final\config-server-repository
+          # Acessando pelo github
+          uri: https://github.com/marconunesrj/spring-cloud-config-server-repository
+          default-label: main  # branch que está o repositório no github
+          username: marconunesrj
+          password: xxx
+          # Significa que os servidores de configuração clonam o repositório do servidor de configuração na inicialização
+          clone-on-start: true
+    # Significa que, se o servidor de configuração não conseguir acessar o repositório do servidor
+    # de configuração e carregar a configuração, ele vai parar imediatamente
+    fail-fast: true
+  security:
+    user:
+      # Mesma informação no arquivo bootstrap.yml do módulo: twitter-to-kafka-service
+      name: spring_cloud_user
+      # Mesma informação no arquivo bootstrap.yml do módulo: twitter-to-kafka-service
+      password: '{cipher}c0d85293cb01a46b3b629a12e5620f4e9d00d4ede8bdf248cf5b83e23f4536501e4b34a8d56b7a34fcee17aa01d05330'
