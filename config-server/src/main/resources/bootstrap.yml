@@ -40,3 +40,6 @@ jasypt:
     # Variável de ambiente Permanente (Usuário Atual) Execute: setx JASYPT_ENCRYPTOR_PASSWORD "Demo_Pwd!2024" ou /M
     # Para visualizar as variáveis de ambiente no PowerShell, você pode usar o seguinte comando: Get-ChildItem Env:
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+encrypt:
+  key: ${JASYPT_ENCRYPTOR_PASSWORD}
