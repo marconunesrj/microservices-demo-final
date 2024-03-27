@@ -32,3 +32,5 @@ spring:
 encrypt:
   # Utilizei a mesma variável de ambiente para configurar a criptografia com Jasypt
   key: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+
