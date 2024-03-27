@@ -18,5 +18,5 @@ spring:
       password: '{cipher}666f0899a1a920994d5c31e775c77f90f4bbf381c1ad82c46f9028f1899b901785a5ec4212d935cacbfe9187b68a5f52'
 
 encrypt:
-  # Utilizei a mesma variável de ambiente para configurar a criptografia com Jasypt
-  key: ${JASYPT_ENCRYPTOR_PASSWORD}
+  # Criada uma nova variável de ambiente para configurar a criptografia com o mesmo valor anterior
+  key: ${ENCRYPT_KEY}

@@ -7,9 +7,11 @@ services:
       - "5005:5005"
     volumes:
       - "./docker-logs:/workspace/twitter-to-kafka-service/logs"
+      # Este script verifica se a aplicação do config-server está rodando e não apenas no ar
       - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
     user: root
     entrypoint: ["check-config-server-started.sh"]
+    # O depends_on, apenas verifica se o container está rodando, mas não se a aplicação está rodando
     depends_on:
       - config-server
 
@@ -23,16 +25,19 @@ services:
       - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
       - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
-      - "TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS=true"
-      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
-      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+      - "TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS=true"  # Usar mocks, pois não tenho acesso a API do Twitter
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"  # Para acessar o config-server do Container
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"  # Passando a variável de ambiente da máquina local para o container
     networks:
       - ${GLOBAL_NETWORK:-services}
 
+  # Serviço para configurações externas
   config-server:
+    container_name: config-server
+    # Estas variáveis de ambiente vem do arquivo .env
     image: ${GROUP_ID}/config.server:${SERVICE_VERSION:-latest}
     ports:
-      - "5006:5006"
+      - "5006:5006"  # Portas para depuração
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
     environment:
