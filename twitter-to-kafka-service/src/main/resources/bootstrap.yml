@@ -15,4 +15,18 @@ spring:
       # Mesma informação no arquivo bootstrap.yml do módulo: config-server
       username: spring_cloud_user
       # Mesma informação no arquivo bootstrap.yml do módulo: config-server
-      password: '{cipher}2ca52e09ec85aa620abce2e704242985bf786c9a684461b023a563b34b96c527ec81160eae48d731017c98ee0b9e1824'
+      # Utilizando Jasypt (módulo playgroud)
+      password: ENC(cjAiHZVq89MieOC9iFlfLh5PsECy2vCEkcC5O4UV1itb0NL+MUPkK20O7PeAkeh9VJkbupKk8MTWpeo+ZvPvMw==)
+      # Utilizando JCE
+#      password: '{cipher}2ca52e09ec85aa620abce2e704242985bf786c9a684461b023a563b34b96c527ec81160eae48d731017c98ee0b9e1824'
+
+# Removido, pois foi colocado como argumento na chamada de execução da aplicação
+#jasypt:
+#  encryptor:
+#    # https://www.profissionaisti.com.br/o-que-e-e-como-setar-uma-variavel-de-ambiente-linux-e-windows/
+#    # Executar PowerShell como Administrador
+#    # Variável de ambiente Temporária (Apenas na Sessão) Execute: set JASYPT_ENCRYPTOR_PASSWORD="Demo_Pwd!2024"
+#    # Variável de ambiente Permanente (Usuário Atual) Execute: setx JASYPT_ENCRYPTOR_PASSWORD "Demo_Pwd!2024" ou /M
+#    # Para visualizar as variáveis de ambiente no PowerShell, você pode usar o seguinte comando: Get-ChildItem Env:
+#    password: ${JASYPT_ENCRYPTOR_PASSWORD}
+##    password: Demo_Pwd!2024

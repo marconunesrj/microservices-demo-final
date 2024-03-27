@@ -29,6 +29,8 @@ public class TwitterToKafkaServiceApplication implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
+        // Esta linha deve ser removida, utilizada somente para explicar como passar o parâmetro em linha de comando na chamada do aplicativo
+        // Inserida na chamada como argumentos -Djasypt.encriptor.password='xxxxxxxxx'
         SpringApplication.run(TwitterToKafkaServiceApplication.class, args);
     }
 
