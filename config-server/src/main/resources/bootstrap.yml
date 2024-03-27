@@ -13,7 +13,9 @@ spring:
           uri: https://github.com/marconunesrj/spring-cloud-config-server-repository
           default-label: main  # branch que está o repositório no github
           username: marconunesrj
-          password: xxx
+          # Utilizando JCE
+          # OBS: utilizei o end point no postman na branch jasypt-enc para descobrir a senha cipher
+          password: '{cipher}8917fe49f47a74dff657471c978ede690acc404f3cfaba8553eda86dbeef466d996cb9a1fbfd2e0cdcd1cdaf4f93ecc49eb0d0fcf58ecdf86674c86f05da1822'
           # Significa que os servidores de configuração clonam o repositório do servidor de configuração na inicialização
           clone-on-start: true
     # Significa que, se o servidor de configuração não conseguir acessar o repositório do servidor
@@ -24,4 +26,11 @@ spring:
       # Mesma informação no arquivo bootstrap.yml do módulo: twitter-to-kafka-service
       name: spring_cloud_user
       # Mesma informação no arquivo bootstrap.yml do módulo: twitter-to-kafka-service
-      password: '{cipher}c0d85293cb01a46b3b629a12e5620f4e9d00d4ede8bdf248cf5b83e23f4536501e4b34a8d56b7a34fcee17aa01d05330'
+      # OBS: utilizei o end point no postman na branch jasypt-enc para descobrir a senha cipher
+      password: '{cipher}666f0899a1a920994d5c31e775c77f90f4bbf381c1ad82c46f9028f1899b901785a5ec4212d935cacbfe9187b68a5f52'
+
+encrypt:
+  # Utilizei a mesma variável de ambiente para configurar a criptografia com Jasypt
+  key: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+
