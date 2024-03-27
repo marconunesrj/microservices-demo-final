@@ -1,8 +1,8 @@
 # Running the application
 - Please enter the correct credentials in twitter4j.properties file.
 - Then run mvn install -DskipTests command
-- Then go to docker-compose folder and run docker-compose up command to run kafka cluster and twitter-to-kafka-service together
-- Execute: docker-compose up -d pois a referência dos arquivos .yml está no arquivo .env na variável COMPOSE_FILE
+- Then go to docker-compose folder, execute o GITBASH, and run: chmod +x check-config-server-started.sh
+- Then go to docker-compose folder, Execute: docker-compose --project-name event-drive-microservices up -d pois a referência dos arquivos .yml está no arquivo .env na variável COMPOSE_FILE
 - Check the pom.xml file and spring-boot-maven-plugin section in twitter-to-kafka-service, where we configure 
 the build-image goal to create docker image with mvn install command
 - Check the services.yml file under docker-compose folder which includes the compose definition 
