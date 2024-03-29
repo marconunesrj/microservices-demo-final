@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "kafka-producer-config")  // Estas propriedades vem do arquivo application.yml
+// para ler as informações do arquivo config-client-twitter_to_kafka.yml no módulo (Github): config-server-repository
+@ConfigurationProperties(prefix = "kafka-producer-config")
 public class KafkaProducerConfigData {
     private String keySerializerClass;
     private String valueSerializerClass;

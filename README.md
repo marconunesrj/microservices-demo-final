@@ -2,6 +2,7 @@
 - Please enter the correct credentials in twitter4j.properties file.
 - Then run mvn install -DskipTests command
 - Then go to docker-compose folder, execute o GITBASH, and run: chmod +x check-config-server-started.sh
+- Then go to docker-compose folder, execute o GITBASH, and run: chmod +x check-kafka-topics-created.sh
 - Then go to docker-compose folder, Execute: docker-compose --project-name event-drive-microservices up -d pois a referência dos arquivos .yml está no arquivo .env na variável COMPOSE_FILE
 - Check the pom.xml file and spring-boot-maven-plugin section in twitter-to-kafka-service, where we configure 
 the build-image goal to create docker image with mvn install command
@@ -35,3 +36,6 @@ for microservice, twitter-to-kafka-service
 - Insert the configuration information on file pom.xml
 - Create a model file .avro like: src.main.resources.avro.twitte.avsc
 - Execute: mvn clean install
+
+# Spring Data Elasticsearch
+- https://docs.spring.io/spring-data/elasticsearch/reference/elasticsearch/object-mapping.html

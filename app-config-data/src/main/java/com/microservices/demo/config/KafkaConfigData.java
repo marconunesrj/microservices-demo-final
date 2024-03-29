@@ -8,7 +8,8 @@ import java.util.List;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "kafka-config")  // Estas propriedades vem do arquivo application.yml
+// para ler as informações do arquivo config-client-twitter_to_kafka.yml ou config-client-kafka_to_elastic.yml no módulo (Github): config-server-repository
+@ConfigurationProperties(prefix = "kafka-config")
 public class KafkaConfigData {
     private String bootstrapServers;
     private String schemaRegistryUrlKey;
