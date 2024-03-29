@@ -14,7 +14,9 @@ services:
     # O depends_on, apenas verifica se o container está rodando, mas não se a aplicação está rodando
     depends_on:
       - config-server
-
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
     # Substitui algumas variáveis do application.yml para rodar no Docker como:
     #   KAFKA-CONFIG_TOPIC-NAME, KAFKA-CONFIG_BOOTSTRAP-SERVERS,
     #   KAFKA-CONFIG_SCHEMA-REGISTRY-URL e TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS
@@ -25,23 +27,56 @@ services:
       - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
       - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
       - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
-      - "TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS=true"  # Usar mocks, pois não tenho acesso a API do Twitter
-      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"  # Para acessar o config-server do Container
-      - "ENCRYPT_KEY=${ENCRYPT_KEY}"  # Passando a variável de ambiente da máquina local para o container
+      - "TWITTER-TO-KAFKA-SERVICE_ENABLE-MOCK-TWEETS=true"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
-
+  kafka-to-elastic-service:
+    container_name: kafka-to-elastic-service
+    image: ${GROUP_ID}/kafka.to.elastic.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5006:5006"
+    volumes:
+      - "./docker-logs:/workspace/kafka-to-elastic-service/logs"
+      # Este script verifica se os topics foram criados e não apenas o container twitter-to-kafka-service está no ar
+      - "./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh"
+    user: root
+    entrypoint: ["check-kafka-topics-created.sh"]
+    depends_on:
+      - config-server
+      - twitter-to-kafka-service
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - elastic-1
+      - elastic-2
+      - elastic-3
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "KAFKA-CONFIG_TOPIC-NAME=twitter-topic"
+      - "KAFKA-CONFIG_BOOTSTRAP-SERVERS=kafka-broker-1:9092, kafka-broker-2:9092, kafka-broker-3:9092"
+      - "KAFKA-CONFIG_SCHEMA-REGISTRY-URL=http://schema-registry:8081"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
+      - "ELASTIC-CONFIG_CONNECTION-URL=http://elastic-1:9200"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
   # Serviço para configurações externas
   config-server:
     container_name: config-server
     # Estas variáveis de ambiente vem do arquivo .env
     image: ${GROUP_ID}/config.server:${SERVICE_VERSION:-latest}
     ports:
-      - "5006:5006"  # Portas para depuração
+      - "5007:5007"
+      - "8888:8888"
     volumes:
       - "./docker-logs:/workspace/config-server/logs"
     environment:
-      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Xms128m -Xmx256m"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 -Xms128m -Xmx256m"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}

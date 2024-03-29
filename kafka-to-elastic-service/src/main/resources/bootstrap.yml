@@ -1,22 +1,16 @@
-# O arquivo bootstrap.yml é carregado antes do application.yml.
-# Utilizado para obter as configurações que estão no config-server
 spring:
   application:
-    name: twitter-to-kafka-service  # Nome do micro-serviço
+    name: kafka-to-elastic-service
   profiles:
-    # Este nome faz parte do nome do arquivo .yml no módulo: config-server-repository -> config-client-twitter_to_kafka.yml
-    active: twitter_to_kafka
+    # Este nome faz parte do nome do arquivo .yml no módulo: config-server-repository -> config-client-kafka_to_elastic.yml
+    active: kafka_to_elastic
   cloud:
     config:
       # O nome config-client serve para dar nome aos arquivos: config-client.yml no módulo: config-server-repository
-      name: twitter-to-kafka-service,config-client
+      name: kafka-to-elastic-service,config-client
       # Endereço onde o config-server está rodando. Veja arquivo bootstrap.yml do módulo: config-server
       uri: http://localhost:8888
       # Mesma informação no arquivo bootstrap.yml do módulo: config-server
       username: spring_cloud_user
       # Mesma informação no arquivo bootstrap.yml do módulo: config-server
       password: '{cipher}666f0899a1a920994d5c31e775c77f90f4bbf381c1ad82c46f9028f1899b901785a5ec4212d935cacbfe9187b68a5f52'
-
-#encrypt:
-#  # Criada uma nova variável de ambiente para configurar a criptografia com o mesmo valor anterior
-#  key: ${ENCRYPT_KEY}

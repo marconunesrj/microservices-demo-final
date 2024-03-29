@@ -9,7 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication
+@SpringBootApplication  // Torná-la um iniciador de inicialização do Spring
 @ComponentScan(basePackages = "com.microservices.demo")  // Necessário para encontrar os Beans em outros Módulos
 public class TwitterToKafkaServiceApplication implements CommandLineRunner {
 

@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "retry-config")  // Estas propriedades vem do arquivo application.yml
+// para ler as informações do arquivo config-client-twitter_to_kafka.yml ou config-client-kafka_to_elastic.yml no módulo (Github): config-server-repository
+@ConfigurationProperties(prefix = "retry-config")
 public class RetryConfigData {
 
     private Long initialIntervalMs;

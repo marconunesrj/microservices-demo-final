@@ -1,0 +1,73 @@
+version: '3.7'
+services:
+
+  # Serão criados 3 nós para elasticsearch, como no cluster kafka
+  elastic-1:
+    container_name: elastic-1
+    # Utilizando a imagem oficial do docker elasticsearch com a versão definida no arquivo .env
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-latest}
+    hostname: elastic-1
+    environment:
+      - node.name=elastic-1
+      - cluster.name=es-twitter-cluster
+      - discovery.seed_hosts=elastic-2,elastic-3  # host de semente de descoberta para que os outros nós para que eles possam se encontrar
+      - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3  # especificamos todos os nós que estão em execução. Isso significa que qualquer um dos nós pode ser escolhido como mestre.
+      - bootstrap.memory_lock=true  # é necessária para evitar a troca de memória por disco, pois é ruim para o desempenho e para a estabilidade do nó.
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # suficiente para ambiente local
+    ulimits:
+      # Definida para dar permissão ao Elasticsearch para bloquear a memória, usando a propriedade de bloqueio de memória que definimos na seção de ambiente(environment)
+      memlock:
+        soft: -1
+        hard: -1
+    # Tornar os dados persistentes após reiniciar este arquivo de composição (compose file)
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    # Só precisa ser definida neste nó, o que permite alcançar este cluster de fora do recipiente (container)
+    ports:
+      - "9200:9200"
+    networks:
+      - ${GLOBAL_NETWORK:-elastic}
+  elastic-2:
+    container_name: elastic-2
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    environment:
+      - node.name=elastic-2
+      - cluster.name=es-twitter-cluster
+      - discovery.seed_hosts=elastic-1,elastic-3
+      - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    networks:
+      - ${GLOBAL_NETWORK:-elastic}
+  elastic-3:
+    container_name: elastic-3
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    environment:
+      - node.name=elastic-3
+      - cluster.name=es-twitter-cluster
+      - discovery.seed_hosts=elastic-1,elastic-2
+      - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    networks:
+      - ${GLOBAL_NETWORK:-elastic}
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local

@@ -18,9 +18,13 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig<K extends Serializable, V extends SpecificRecordBase> {
 
-    private final KafkaConfigData kafkaConfigData;  // Estas propriedades vem do arquivo application.yml
+    // KafkaConfigData está no módulo: app-config-data
+    // para ler as informações do arquivo config-client-twitter_to_kafka.yml no módulo (Github): config-server-repository
+    private final KafkaConfigData kafkaConfigData;
 
-    private final KafkaProducerConfigData kafkaProducerConfigData;  // Estas propriedades vem do arquivo application.yml
+    // KafkaProducerConfigData está no módulo: app-config-data
+    // para ler as informações do arquivo config-client-twitter_to_kafka.yml no módulo (Github): config-server-repository
+    private final KafkaProducerConfigData kafkaProducerConfigData;
 
     public KafkaProducerConfig(KafkaConfigData configData, KafkaProducerConfigData producerConfigData) {
         this.kafkaConfigData = configData;
