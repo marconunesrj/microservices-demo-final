@@ -16,9 +16,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Objects;
 
 @Configuration
-// Pacote onde estarão os repositories do elasticsearch. No módulo: elastic-index-client
-// Colocado para poder utilizar o elasticsearch Index Repository
-@EnableElasticsearchRepositories(basePackages = "com.microservices.demo.elastic.index.client.repository")
+// Pacote onde estarão os repositories do elasticsearch. Nos módulos: elastic-index-client e elastic-query-client
+// Colocado para poder utilizar o elasticsearch Index Repository e elasticsearch Query Repository
+@EnableElasticsearchRepositories(basePackages = "com.microservices.demo.elastic")
 public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
 
     private final ElasticConfigData elasticConfigData;

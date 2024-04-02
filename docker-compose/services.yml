@@ -6,11 +6,12 @@ services:
     ports:
       - "5005:5005"
     volumes:
-      - "./docker-logs:/workspace/twitter-to-kafka-service/logs"
+      - ./docker-logs:/workspace/twitter-to-kafka-service/logs
       # Este script verifica se a aplicação do config-server está rodando e não apenas no ar
-      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
+      - ./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh
     user: root
     entrypoint: ["check-config-server-started.sh"]
+#    command: /bin/sh -c "/usr/local/bin/check-config-server-started.sh"
     # O depends_on, apenas verifica se o container está rodando, mas não se a aplicação está rodando
     depends_on:
       - config-server
@@ -38,11 +39,12 @@ services:
     ports:
       - "5006:5006"
     volumes:
-      - "./docker-logs:/workspace/kafka-to-elastic-service/logs"
+      - ./docker-logs:/workspace/kafka-to-elastic-service/logs
       # Este script verifica se os topics foram criados e não apenas o container twitter-to-kafka-service está no ar
-      - "./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh"
+      - ./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh
     user: root
     entrypoint: ["check-kafka-topics-created.sh"]
+#    command: /bin/sh -c "/usr/local/bin/check-kafka-topics-created.sh"
     depends_on:
       - config-server
       - twitter-to-kafka-service
@@ -74,9 +76,39 @@ services:
       - "5007:5007"
       - "8888:8888"
     volumes:
-      - "./docker-logs:/workspace/config-server/logs"
+      - ./docker-logs:/workspace/config-server/logs
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 -Xms128m -Xmx256m"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+  elastic-query-service:
+    container_name: elastic-query-service
+    image: ${GROUP_ID}/elastic.query.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5008:5008"
+      - "8183:8183"
+    volumes:
+      - ./docker-logs:/workspace/elastic-query-service/logs
+      - ./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh
+    user: root
+    entrypoint: ["check-config-server-started.sh"]
+#    command: /bin/sh -c "/usr/local/bin/check-config-server-started.sh"
+    depends_on:
+      - config-server
+      - kafka-to-elastic-service
+      - elastic-1
+      - elastic-2
+      - elastic-3
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
+      - "ELASTIC-CONFIG_CONNECTION-URL=http://elastic-1:9200"
+      - "SERVER_PORT=8183"
+      - "SERVER_SERVLET_CONTEXT-PATH=/elastic-query-service"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
