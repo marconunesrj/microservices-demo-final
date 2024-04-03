@@ -1,4 +1,16 @@
-# Running the application
+# Running the application com Docker e por dentro do Projeto 
+- Please enter the correct credentials in twitter4j.properties file.
+- Then go to docker-compose folder e Execute:  
+     - docker-compose -f common.yml -f elastic_cluster.yml -f kafka_cluster.yml up -d
+
+- Depois execute os microservices na seguinte ordem:
+     - config-server
+     - TwitterToKafkaService
+     - KafkaToElasticService
+     - ElasticQueryService  Obs: suba duas instâncias uma na porta 8183 e outra na porta 8185, para o LoadBalancer
+     - ElasticQueryWebClient
+
+# Running the application somente pelo Docker
 - Please enter the correct credentials in twitter4j.properties file.
 - Then run mvn install -DskipTests command
 - Then go to docker-compose folder, execute o GITBASH, and run: chmod +x check-config-server-started.sh

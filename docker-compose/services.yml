@@ -6,9 +6,8 @@ services:
     ports:
       - "5005:5005"
     volumes:
-      - ./docker-logs:/workspace/twitter-to-kafka-service/logs
-      # Este script verifica se a aplicação do config-server está rodando e não apenas no ar
-      - ./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh
+      - "./docker-logs:/workspace/twitter-to-kafka-service/logs"
+      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
     user: root
     entrypoint: ["check-config-server-started.sh"]
 #    command: /bin/sh -c "/usr/local/bin/check-config-server-started.sh"
@@ -39,9 +38,8 @@ services:
     ports:
       - "5006:5006"
     volumes:
-      - ./docker-logs:/workspace/kafka-to-elastic-service/logs
-      # Este script verifica se os topics foram criados e não apenas o container twitter-to-kafka-service está no ar
-      - ./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh
+      - "./docker-logs:/workspace/kafka-to-elastic-service/logs"
+      - "./check-kafka-topics-created.sh:/usr/local/bin/check-kafka-topics-created.sh"
     user: root
     entrypoint: ["check-kafka-topics-created.sh"]
 #    command: /bin/sh -c "/usr/local/bin/check-kafka-topics-created.sh"
@@ -82,21 +80,19 @@ services:
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
-  elastic-query-service:
-    container_name: elastic-query-service
+  elastic-query-service-1:
+    container_name: elastic-query-service-1
     image: ${GROUP_ID}/elastic.query.service:${SERVICE_VERSION:-latest}
     ports:
       - "5008:5008"
       - "8183:8183"
     volumes:
-      - ./docker-logs:/workspace/elastic-query-service/logs
-      - ./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh
+      - "./docker-logs:/workspace/elastic-query-service/logs"
+      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
     user: root
-    entrypoint: ["check-config-server-started.sh"]
-#    command: /bin/sh -c "/usr/local/bin/check-config-server-started.sh"
+    entrypoint: [ "check-config-server-started.sh" ]
     depends_on:
       - config-server
-      - kafka-to-elastic-service
       - elastic-1
       - elastic-2
       - elastic-3
@@ -109,6 +105,64 @@ services:
       - "SERVER_PORT=8183"
       - "SERVER_SERVLET_CONTEXT-PATH=/elastic-query-service"
       - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+  elastic-query-service-2:
+    container_name: elastic-query-service-2
+    image: ${GROUP_ID}/elastic.query.service:${SERVICE_VERSION:-latest}
+    ports:
+      - "5009:5009"
+      - "8185:8185"
+    volumes:
+      - "./docker-logs:/workspace/elastic-query-service/logs"
+      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
+    user: root
+    entrypoint: ["check-config-server-started.sh"]
+    depends_on:
+      - config-server
+      - elastic-1
+      - elastic-2
+      - elastic-3
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "ELASTIC-CONFIG_INDEX-NAME=twitter-index"
+      - "ELASTIC-CONFIG_CONNECTION-URL=http://elastic-1:9200"
+      - "SERVER_PORT=8185"
+      - "SERVER_SERVLET_CONTEXT-PATH=/elastic-query-service"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ENCRYPT_KEY=${ENCRYPT_KEY}"
+    networks:
+      - ${GLOBAL_NETWORK:-services}
+  elastic-query-web-client:
+    container_name: elastic-query-web-client
+    image: ${GROUP_ID}/elastic.query.web.client:${SERVICE_VERSION:-latest}
+    ports:
+      - "5010:5010"
+      - "8184:8184"
+    volumes:
+      - "./docker-logs:/workspace/elastic-query-web-client/logs"
+      - "./check-config-server-started.sh:/usr/local/bin/check-config-server-started.sh"
+    user: root
+    entrypoint: ["check-config-server-started.sh"]
+    depends_on:
+      - config-server
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010 -Xms128m -Xmx256m"
+      - "LOGGING_LEVEL_COM_MICROSERVICES_DEMO=info"
+      - "LOGGING_LEVEL_ROOT=info"
+      - "SERVER_PORT=8184"
+      - "SERVER_SERVLET_CONTEXT-PATH=/elastic-query-web-client"
+      - "SPRING_CLOUD_CONFIG_URI=http://config-server:8888"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_BASE-URL=http://elastic-query-service/elastic-query-service/documents"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_INSTANCES_0_ID=elastic-query-service-1"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_INSTANCES_0_HOST=elastic-query-service-1"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_INSTANCES_0_PORT=8183"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_INSTANCES_1_ID=elastic-query-service-2"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_INSTANCES_1_HOST=elastic-query-service-2"
+      - "ELASTIC-QUERY-WEB-CLIENT_WEB-CLIENT_INSTANCES_1_PORT=8185"
       - "ENCRYPT_KEY=${ENCRYPT_KEY}"
     networks:
       - ${GLOBAL_NETWORK:-services}
