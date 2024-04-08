@@ -7,8 +7,12 @@
      - config-server
      - TwitterToKafkaService
      - KafkaToElasticService
-     - ElasticQueryService  Obs: suba duas instâncias uma na porta 8183 e outra na porta 8185, para o LoadBalancer
-     - ElasticQueryWebClient
+     - Depois execute uma das duas implementações abaixo
+       - ElasticQueryService  Obs: suba duas instâncias uma na porta 8183 e outra na porta 8185, para o LoadBalancer
+       - ElasticQueryWebClient   http://localhost:8184/elastic-query-web-client/
+       - Ou
+       - ReactiveElasticQueryService
+       - ReactiveElasticQueryWebClient    http://localhost:8184/reactive-elastic-query-web-client/
 
 # Running the application somente pelo Docker
 - Please enter the correct credentials in twitter4j.properties file.
