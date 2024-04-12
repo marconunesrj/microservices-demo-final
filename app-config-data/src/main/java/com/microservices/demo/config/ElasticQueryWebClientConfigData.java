@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+// para ler as propriedades do arquivo config-client-elastic_query_web.yml no módulo (Github): config-server-repository
 @Data
 @Configuration
-// para ler as propriedades do arquivo config-client-elastic_query_web.yml no módulo (Github): config-server-repository
 @ConfigurationProperties(prefix = "elastic-query-web-client")
 public class ElasticQueryWebClientConfigData {
     private WebClient webClient;

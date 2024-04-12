@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 services:
 
   # Serão criados 3 nós para elasticsearch, como no cluster kafka
@@ -14,6 +14,11 @@ services:
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3  # especificamos todos os nós que estão em execução. Isso significa que qualquer um dos nós pode ser escolhido como mestre.
       - bootstrap.memory_lock=true  # é necessária para evitar a troca de memória por disco, pois é ruim para o desempenho e para a estabilidade do nó.
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # suficiente para ambiente local
+    healthcheck:
+       test: curl -s http://elastic-1:9200 >/dev/null || exit 1
+       interval: 30s
+       timeout: 10s
+       retries: 50
     ulimits:
       # Definida para dar permissão ao Elasticsearch para bloquear a memória, usando a propriedade de bloqueio de memória que definimos na seção de ambiente(environment)
       memlock:
@@ -27,6 +32,7 @@ services:
       - "9200:9200"
     networks:
       - ${GLOBAL_NETWORK:-elastic}
+
   elastic-2:
     container_name: elastic-2
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
@@ -37,6 +43,11 @@ services:
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+       test: curl -s http://elastic-2:9200 >/dev/null || exit 1
+       interval: 30s
+       timeout: 10s
+       retries: 50
     ulimits:
       memlock:
         soft: -1
@@ -55,6 +66,11 @@ services:
       - cluster.initial_master_nodes=elastic-1,elastic-2,elastic-3
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+       test: curl -s http://elastic-3:9200 >/dev/null || exit 1
+       interval: 30s
+       timeout: 10s
+       retries: 50
     ulimits:
       memlock:
         soft: -1

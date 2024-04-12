@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  keycloak-authorization-server:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-latest}
+    hostname: keycloak-server
+    ports:
+      - "9091:9091"
+
+    # host.docker.internal-> Iremos executar o Postgres em nossa máquina e não no docker,
+    # este é o host dos containers do docker e para acessar a máquina host a partir de um container docker,
+    # pode-se usar essa variável como o nome do host
+    environment:
+      - "KEYCLOAK_USER=admin"
+      - "KEYCLOAK_PASSWORD=admin"
+      - "JAVA_OPTS=-Djboss.http.port=9091"
+      - "DB_VENDOR=POSTGRES"
+      - "DB_ADDR=host.docker.internal"
+      - "DB_DATABASE=keycloak"
+      - "DB_USER=keycloak"
+      - "DB_SCHEMA=keycloak"
+      - "DB_PASSWORD=keycloak"

@@ -33,3 +33,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## Postgres_data
+docker-compose/postgres_data

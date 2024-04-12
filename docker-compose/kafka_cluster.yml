@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 services:
   zookeeper:
     container_name: zookeeper
@@ -13,6 +13,13 @@ services:
       ZOOKEEPER_INIT_LIMIT: 5
       ZOOKEEPER_SYNC_LIMIT: 2
       ZOOKEEPER_SERVERS: zookeeper:2888:3888
+    # https://github.com/confluentinc/cp-docker-images/issues/248
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - ${GLOBAL_NETWORK:-kafka}
 
@@ -23,10 +30,14 @@ services:
     image: confluentinc/cp-schema-registry:${KAFKA_VERSION}
     hostname: schema-registry
     depends_on:
-      - zookeeper
-      - kafka-broker-1
-      - kafka-broker-2
-      - kafka-broker-3
+      zookeeper:
+        condition: service_healthy
+      kafka-broker-1:
+        condition: service_healthy
+      kafka-broker-2:
+        condition: service_healthy
+      kafka-broker-3:
+        condition: service_healthy
     ports:
       - "8081:8081"
     environment:
@@ -34,6 +45,11 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
       SCHEMA_REGISTRY_DEBUG: 'true'
+    healthcheck:
+      test: curl --output /dev/null --silent --head --fail http://schema-registry:8081/subjects
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - ${GLOBAL_NETWORK:-kafka}
 
@@ -45,7 +61,8 @@ services:
     ports:
       - "19092:19092"
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -54,8 +71,17 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_COMPRESSION_TYPE: producer  # Tipo de compactação
+    # https://github.com/confluentinc/cp-docker-images/issues/248
+    # https://java.msk.ru/add-healthchecks-for-apache-kafka-in-docker-compose/
+    healthcheck:
+#      test: kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+      test: nc -z localhost 9092 || exit -1
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - ${GLOBAL_NETWORK:-kafka}
+
   kafka-broker-2:
     container_name: kafka-broker-2
     image: confluentinc/cp-kafka:${KAFKA_VERSION}
@@ -63,7 +89,8 @@ services:
     ports:
       - "29092:29092"
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -71,8 +98,15 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_COMPRESSION_TYPE: producer
+    healthcheck:
+#      test: kafka-topics --bootstrap-server kafka-broker-2:9092 --list
+      test: nc -z localhost 9092 || exit -1
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - ${GLOBAL_NETWORK:-kafka}
+
   kafka-broker-3:
     container_name: kafka-broker-3
     image: confluentinc/cp-kafka:${KAFKA_VERSION}
@@ -80,7 +114,8 @@ services:
     ports:
       - "39092:39092"
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -88,5 +123,13 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_COMPRESSION_TYPE: producer
+    # https://github.com/confluentinc/cp-docker-images/issues/248
+    # https://java.msk.ru/add-healthchecks-for-apache-kafka-in-docker-compose/
+    healthcheck:
+#      test: kafka-topics --bootstrap-server kafka-broker-3:9092 --list
+      test: nc -z localhost 9092 || exit -1
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - ${GLOBAL_NETWORK:-kafka}
