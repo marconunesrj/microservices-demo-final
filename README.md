@@ -4,14 +4,14 @@
      - docker-compose -f keycloak_authorization_server2.yml up -d
      - docker-compose -f common.yml -f elastic_cluster.yml -f kafka_cluster.yml up -d
 
-- Depois execute os microservices na seguinte ordem:
+- Then run the microservices in the following order:
      - config-server
      - TwitterToKafkaService
      - KafkaToElasticService
-     - Depois execute uma das duas implementações abaixo
-       - ElasticQueryService  Obs: suba duas instâncias uma na porta 8183 e outra na porta 8186, para o LoadBalancer
+     - Then run one of the two implementations below
+       - ElasticQueryService  Obs: upload two instances, one on port 8183 and the other on port 8186, for LoadBalancer
        - ElasticQueryWebClient   http://localhost:8184/elastic-query-web-client/
-       - Ou
+       - or
        - ReactiveElasticQueryService
        - ReactiveElasticQueryWebClient    http://localhost:8184/reactive-elastic-query-web-client/
 
@@ -28,15 +28,15 @@ for microservice, twitter-to-kafka-service
 - Then check the docker containers using docker ps command
 - Use standalone kafkacat or docker container(https://hub.docker.com/r/confluentinc/cp-kafkacat) to install kafkacat
 - Execute: docker pull confluentinc/cp-kafkacat
-- Para verificar, execute: docker run -it --network=host confluentinc/cp-kafkacat:5.0.4 kafkacat -L -b localhost:19092
+- To check, run: docker run -it --network=host confluentinc/cp-kafkacat:5.0.4 kafkacat -L -b localhost:19092
 - Then check the kafka cluster
 
-- Se estiver rodando no Docker
+- If running on Docker
     docker run -it --network=host confluentinc/cp-kafkacat kafkacat -L -b localhost:19092
 
-- Verificar os Topics que estão chegando no Kafka
-   -C significa Consumers
-   -t siginifica Topic
+- Check the Topics that are coming to Kafka
+   -C means Consumers
+   -t means Topic
    docker run -it --network=host confluentinc/cp-kafkacat kafkacat -C -b localhost:19092 -t twitter-topic
 
 # Confluentinc
@@ -49,7 +49,7 @@ for microservice, twitter-to-kafka-service
 # Config Avro
 - https://avro.apache.org/docs/1.11.1/getting-started-java/
 
-## Criando a Classe Java a partir do modelo Avro
+## Creating the Java Class from the Avro model
 - Insert the configuration information on file pom.xml
 - Create a model file .avro like: src.main.resources.avro.twitte.avsc
 - Execute: mvn clean install
