@@ -35,4 +35,4 @@ build/
 .vscode/
 
 ## Postgres_data
-docker-compose/postgres_data
+# docker-compose/postgres_data
