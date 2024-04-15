@@ -1,7 +1,7 @@
 # Running the application com Docker e por dentro do Projeto 
 - Please enter the correct credentials in twitter4j.properties file.
-- Then go to docker-compose folder e Execute:
-     - docker-compose -f keycloak_authorization_server2.yml up -d
+- Then go to docker-compose folder and run:
+     - docker-compose -f keycloak_authorization_server.yml up -d
      - docker-compose -f common.yml -f elastic_cluster.yml -f kafka_cluster.yml up -d
 
 - Then run the microservices in the following order:

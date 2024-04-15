@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  keycloak_postgres:
+  postgres:
     container_name: keycloak_postgres
     image: postgres:${POSTGRES_VERSION:-latest}
     volumes:
@@ -58,7 +58,7 @@ services:
       - "KC_DB_URL_PORT=5432"
     # https://docs.docker.com/compose/compose-file/05-services/#depends_on
     depends_on:
-      keycloak_postgres:
+      postgres:
         condition: service_healthy
     networks:
       - ${GLOBAL_NETWORK:-services}

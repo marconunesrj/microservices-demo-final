@@ -1,14 +1,16 @@
 version: '3.8'
+
 networks:
   application:
     driver: bridge
+
 services:
 #  keycloak_postgres:
   postgres:
     container_name: keycloak_postgres
     image: postgres:${POSTGRES_VERSION:-latest}
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data # all changes in database will be stored in this volume
+      - ./postgres_data1:/var/lib/postgresql/data # all changes in database will be stored in this volume
       - ./postgres_init/01-init.sh:/docker-entrypoint-initdb.d/init-db.sh # used only first time container is built to create database and users
     environment:
       - "POSTGRES_USER=postgres"
@@ -28,7 +30,7 @@ services:
       retries: 10
     restart: "no"
     networks:
-      - ${GLOBAL_NETWORK:-postgres}
+      - ${GLOBAL_NETWORK:-services}
     deploy:
       resources:
         limits:
@@ -40,12 +42,12 @@ services:
     hostname: keycloak-server
     ports:
       - "9091:9091"
-    volumes:
-      - ./keycloak/realms/export:/tmp/export
+#    volumes:
+#      - ./keycloak/realms/export:/tmp/export
 #      - ./check-postgres-started.sh:/opt/keycloak/bin/check-postgres-started.sh
 #    entrypoint: [ "sh", "-c", "/opt/keycloak/bin/check-postgres-started.sh && /opt/keycloak/bin/kc.sh", "start-dev", "--http-port", "9091" ]
 #    entrypoint: [ "sh", "-c", "/opt/keycloak/bin/check-postgres-started.sh" ]
-    entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev", "--http-port", "9091" ]
+#    entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev", "--http-port", "9091" ]
 #    command: ./check-postgres-started.sh
     environment:
       - "KEYCLOAK_ADMIN=admin"
@@ -63,7 +65,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - ${GLOBAL_NETWORK:-postgres}
+      - ${GLOBAL_NETWORK:-services}
 volumes:
-  postgres_data:
+  postgres_data1:
     driver: local
