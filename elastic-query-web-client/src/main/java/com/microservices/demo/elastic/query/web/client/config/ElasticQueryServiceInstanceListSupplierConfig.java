@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 // Esta classe serve para o LoadBalancer
 @Configuration
-@Primary  // Colocado para que o Spring utilize esta implementação ao invés de outra que ela possua
+// Colocado para que o Spring utilize esta implementação ao invés de outra que ela possua
+@Primary
 public class ElasticQueryServiceInstanceListSupplierConfig implements ServiceInstanceListSupplier {
 
     private final ElasticQueryWebClientConfigData.WebClient webClientConfig;
