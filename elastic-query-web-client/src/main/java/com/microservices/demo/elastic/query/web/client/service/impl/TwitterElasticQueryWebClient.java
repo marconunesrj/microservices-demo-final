@@ -2,8 +2,8 @@ package com.microservices.demo.elastic.query.web.client.service.impl;
 
 import com.microservices.demo.config.ElasticQueryWebClientConfigData;
 import com.microservices.demo.elastic.query.web.client.common.exception.ElasticQueryWebClientException;
+import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientAnalyticsResponseModel;
 import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientRequestModel;
-import com.microservices.demo.elastic.query.web.client.common.model.ElasticQueryWebClientResponseModel;
 import com.microservices.demo.elastic.query.web.client.service.ElasticQueryWebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,23 +43,32 @@ public class TwitterElasticQueryWebClient implements ElasticQueryWebClient {
     }
 
     @Override
-    public List<ElasticQueryWebClientResponseModel> getDataByText(ElasticQueryWebClientRequestModel requestModel) {
+    public ElasticQueryWebClientAnalyticsResponseModel getDataByText(ElasticQueryWebClientRequestModel requestModel) {
         LOG.info("Querying by text {}", requestModel.getText());
-        /* Como esta solicitação retornará mais de um dado, usarei o método bodyToFlux com parâmetro
-         Modelo de resposta de cliente web de consulta elástica (ElasticQueryWebClientResponseModel).
-         Depois colete-o em uma lista.
-         No final, chamamos o método de bloqueio, pois desejamos obter a resposta imediatamente,
-         ou seja, de forma síncrona neste cenário. Sem esta chamada de método de bloqueio, ele
-         não retornará imediatamente.
-
-         É preciso criar alguns métodos de retorno de chamada que serão chamados posteriormente de forma
-         assíncrona.
-         */
         return getWebClient(requestModel)
-                .bodyToFlux(ElasticQueryWebClientResponseModel.class)
-                .collectList()
+                .bodyToMono(ElasticQueryWebClientAnalyticsResponseModel.class)
+                .log()//Logger
                 .block();
     }
+
+//    @Override
+//    public List<ElasticQueryWebClientResponseModel> getDataByText(ElasticQueryWebClientRequestModel requestModel) {
+//        LOG.info("Querying by text {}", requestModel.getText());
+//        /* Como esta solicitação retornará mais de um dado, usarei o método bodyToFlux com parâmetro
+//         Modelo de resposta de cliente web de consulta elástica (ElasticQueryWebClientResponseModel).
+//         Depois colete-o em uma lista.
+//         No final, chamamos o método de bloqueio, pois desejamos obter a resposta imediatamente,
+//         ou seja, de forma síncrona neste cenário. Sem esta chamada de método de bloqueio, ele
+//         não retornará imediatamente.
+//
+//         É preciso criar alguns métodos de retorno de chamada que serão chamados posteriormente de forma
+//         assíncrona.
+//         */
+//        return getWebClient(requestModel)
+//                .bodyToFlux(ElasticQueryWebClientResponseModel.class)
+//                .collectList()
+//                .block();
+//    }
 
     /*
     BodyInserters é uma interface responsável por preencher um corpo de mensagem de saída HTTP
@@ -81,10 +90,11 @@ public class TwitterElasticQueryWebClient implements ElasticQueryWebClient {
                         clientResponse -> Mono.just(new BadCredentialsException("Not authenticated!")))
                 .onStatus(
                         HttpStatus::is4xxClientError,
-                        cr -> Mono.just(new ElasticQueryWebClientException(cr.statusCode().getReasonPhrase())))
+                        clientResponse -> Mono.just(
+                                new ElasticQueryWebClientException(clientResponse.statusCode().getReasonPhrase())))
                 .onStatus(
                         HttpStatus::is5xxServerError,
-                        cr -> Mono.just(new Exception(cr.statusCode().getReasonPhrase())));
+                        clientResponse -> Mono.just(new Exception(clientResponse.statusCode().getReasonPhrase())));
     }
 
 

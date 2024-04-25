@@ -12,11 +12,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+// Em caso de dúvida ver aula 71 da seção 09
+// https://www.udemy.com/course/event-driven-microservices-spring-boot-kafka-and-elasticsearch/learn/lecture/23788934#questions
 @Component
 public class QueryServicePermissionEvaluator implements PermissionEvaluator {
 
     private static final String SUPER_USER_ROLE = "APP_SUPER_USER_ROLE";
 
+    // HttpServletRequest é na verdade um instância de SecurityContextHolderAwareRequestWrapper
     private final HttpServletRequest httpServletRequest;
 
     public QueryServicePermissionEvaluator(HttpServletRequest request) {
@@ -35,7 +38,7 @@ public class QueryServicePermissionEvaluator implements PermissionEvaluator {
             return preAuthorize(authentication, ((ElasticQueryServiceRequestModel) targetDomain).getId(), permission);
         } else if (targetDomain instanceof ResponseEntity || targetDomain == null) {
             if (targetDomain == null) {
-                return true;
+                return true;  // Retorna true porque nenhum documento foi encontrado
             }
             List<ElasticQueryServiceResponseModel> responseBody =
                     ((ResponseEntity<List<ElasticQueryServiceResponseModel>>) targetDomain).getBody();
@@ -70,6 +73,8 @@ public class QueryServicePermissionEvaluator implements PermissionEvaluator {
                                   List<ElasticQueryServiceResponseModel> responseBody,
                                   Object permission) {
         TwitterQueryUser twitterQueryUser = (TwitterQueryUser) authentication.getPrincipal();
+        // Esperamos que o usuário tenha permissão para acessar TODOS os documentos que consultou
+        // caso contrário retornaremos false (não terá acesso a nenhum dos documentos)
         for (ElasticQueryServiceResponseModel responseModel : responseBody) {
             PermissionType userPermission = twitterQueryUser.getPermissions().get(responseModel.getId());
             if (!hasPermission((String) permission, userPermission)) {
@@ -83,6 +88,7 @@ public class QueryServicePermissionEvaluator implements PermissionEvaluator {
         return userPermission != null && requiredPermission.equals(userPermission.getType());
     }
 
+    // É como chamar o método hasRole dentro da anotação preAuthorize
     private boolean isSuperUser() {
         return httpServletRequest.isUserInRole(SUPER_USER_ROLE);
     }
