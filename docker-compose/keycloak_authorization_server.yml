@@ -1,11 +1,13 @@
 version: '3.8'
 services:
   keycloak-authorization-server:
+    container_name: keycloak-server
     image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-latest}
     hostname: keycloak-server
     ports:
       - "9091:9091"
-
+    expose:
+      - 9091
     # host.docker.internal-> Iremos executar o Postgres em nossa máquina e não no docker,
     # este é o host dos containers do docker e para acessar a máquina host a partir de um container docker,
     # pode-se usar essa variável como o nome do host
