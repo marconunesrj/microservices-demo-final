@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS public.users CASCADE;
 
-CREATE TABLE public.users
+CREATE TABLE IF NOT EXISTS public.users
 (
     id uuid NOT NULL,
     username character varying COLLATE pg_catalog."default",
@@ -9,28 +9,28 @@ CREATE TABLE public.users
     CONSTRAINT users_pkey PRIMARY KEY (id)
 )
 
-    TABLESPACE pg_default;
+TABLESPACE pg_default;
 
-ALTER TABLE public.users
+ALTER TABLE IF EXISTS public.users
     OWNER to postgres;
 
 DROP TABLE IF EXISTS public.documents CASCADE;
 
-CREATE TABLE public.documents
+CREATE TABLE IF NOT EXISTS public.documents
 (
     id uuid NOT NULL,
     document_id character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT documents_pkey PRIMARY KEY (id)
 )
 
-    TABLESPACE pg_default;
+TABLESPACE pg_default;
 
-ALTER TABLE public.documents
+ALTER TABLE IF EXISTS public.documents
     OWNER to postgres;
 
 DROP TABLE IF EXISTS public.user_permissions CASCADE;
 
-CREATE TABLE public.user_permissions
+CREATE TABLE IF NOT EXISTS public.user_permissions
 (
     user_id uuid NOT NULL,
     document_id uuid NOT NULL,
@@ -49,15 +49,15 @@ CREATE TABLE public.user_permissions
 
 TABLESPACE pg_default;
 
-ALTER TABLE public.user_permissions
+ALTER TABLE IF EXISTS public.user_permissions
     OWNER to postgres;
 
-CREATE INDEX "fki_USER_FK"
+CREATE INDEX IF NOT EXISTS "fki_USER_FK"
     ON public.user_permissions USING btree
     (user_id ASC NULLS LAST)
     TABLESPACE pg_default;
 
-CREATE INDEX fki_document_fk
+CREATE INDEX IF NOT EXISTS fki_document_fk
     ON public.user_permissions USING btree
     (document_id ASC NULLS LAST)
     TABLESPACE pg_default;
