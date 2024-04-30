@@ -23,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 // elastic-query-service -> Mesmo valor atribuído a propriedade elastic-query-web-client.service-id
 // no arquivo config-client-elastic_query_web -> Veja a classe ElasticQueryServiceListSupplierConfig
 @Configuration
-@LoadBalancerClient(name = "elastic-query-service", configuration = ElasticQueryServiceInstanceListSupplierConfig.class)
+// Não será mais utilizada, pois utilizaremos o discovery-service
+//@LoadBalancerClient(name = "elastic-query-service", configuration = ElasticQueryServiceInstanceListSupplierConfig.class)
 public class WebClientConfig {
 
     // Utilizando a inner class WebClient da classe ElasticQueryWebClientConfigData
