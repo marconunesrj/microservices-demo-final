@@ -24,7 +24,7 @@ import java.util.Objects;
 
 // TwitterAvroModel -> Vem do módulo: kafka/kafka-model
 @Service
-public class TwitterKafkaConsumer implements KafkaConsumer<Long, TwitterAvroModel> {
+public class TwitterKafkaConsumer implements KafkaConsumer<TwitterAvroModel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwitterKafkaConsumer.class);
 
@@ -64,18 +64,18 @@ public class TwitterKafkaConsumer implements KafkaConsumer<Long, TwitterAvroMode
         LOG.info("Topics with name {} is ready for operations!", kafkaConfigData.getTopicNamesToCreate().toArray());
         // Obter o container do ouvinte do id que especificamos na anotação do ouvinte kafka abaixo
         // e iniciá-lo explicitamente
-//        kafkaListenerEndpointRegistry.getListenerContainer("twitterTopicListener").start();
-        Objects.requireNonNull(kafkaListenerEndpointRegistry
-                .getListenerContainer(kafkaConsumerConfigData.getConsumerGroupId())).start();
+        kafkaListenerEndpointRegistry.getListenerContainer("twitterTopicListener").start();
+//        Objects.requireNonNull(kafkaListenerEndpointRegistry
+//                .getListenerContainer(kafkaConsumerConfigData.getConsumerGroupId())).start();
     }
 
     @Override
     // Ouvinte kafka
     // kafka-config.topic-name -> Vem do arquivo config-client-kafka_to_elastic.yml do módulo: config-server-repository
 //    @KafkaListener(id = "twitterTopicListener", topics = "${kafka-config.topic-name}")  // Creates a kafka Consumer
-    @KafkaListener(id = "${kafka-consumer-config.consumer-group-id}", topics = "${kafka-config.topic-name}")  // Creates a kafka Consumer
+    @KafkaListener(id = "twitterTopicListener", topics = "${kafka-config.topic-name}")  // Creates a kafka Consumer
     public void receive(@Payload List<TwitterAvroModel> messages,
-                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) List<Integer> keys,         // Vem do kafka header
+                        @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) List<Long> keys,         // Vem do kafka header
                         @Header(KafkaHeaders.RECEIVED_PARTITION_ID) List<Integer> partitions,  // Vem do kafka header
                         @Header(KafkaHeaders.OFFSET) List<Long> offsets) {                     // Vem do kafka header
         LOG.info("{} number of message received with keys {}, partitions {} and offsets {}, " +

@@ -1,0 +1,60 @@
+eureka:
+  client:
+    # Definidas como true para o serviço de emparelhamento
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    # Cluster de registro de serviço
+    appname: service-registry-cluster
+
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        # Definido como false, pois usaremos o balanceador de carga da nuvem Spring para implementar
+        # a carga de balanceamento.
+        enabled: false
+  profiles:
+    # Colocado para carregar o arquivo application-singleserver.yml por padrão
+    active: singleserver
+
+# Adicionando 2 profiles para ficar espiando(peering), o segundo é para o emparelhamento
+---
+server:
+  port: 8761
+spring:
+  profiles: peer1
+eureka:
+  instance:
+    hostname: discovery-service-1
+    metadataMap:
+      # Definido o instanceId para usar o nome do aplicativo e o ID da instância com uma porta aleatória.
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    serviceUrl:
+      # Especificamos os 2 nomes de hosts que definimos usando diferentes perfis.
+      # Criamos 1 cluster e dizemos que usaremos 2 instâncias para o serviço de descoberta(discovery-service),
+      # e deixamos que cada instância se encontre.
+      # Devemos editar o arquivo C:\Windows\System32\drivers\etc\hosts e adicionar as linha abaixo
+      #     127.0.0.1       discovery-service-1
+      #     127.0.0.1       discovery-service-2
+      #    (será necessário abrir o arquivo pelo "Bloco de notas" usando a opção "Executar como Administrador")
+      #    https://wiki.task.com.br/Configura%C3%A7%C3%B5es_do_arquivo_hosts
+      # para mapear localhost para discovery-service-1 e 2 para que possamos utilizar estes endereços
+      # quando executarmos este serviço fora do docker.
+      defaultZone: http://discovery-service-1:8761/eureka/,http://discovery-service-2:8762/eureka/
+
+---
+server:
+  port: 8762
+spring:
+  profiles: peer2
+eureka:
+  instance:
+    hostname: discovery-service-2
+    metadataMap:
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    serviceUrl:
+      # Especificamos os 2 nomes de hosts que definimos usando diferentes perfis.
+      defaultZone: http://discovery-service-2:8762/eureka/,http://discovery-service-1:8761/eureka/

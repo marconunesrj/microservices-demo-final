@@ -1,0 +1,18 @@
+server:
+  port: 8761
+
+eureka:
+  client:
+    # Definidas como false, porque na inicialização, o próprio serviço de descoberta(discovery-service)
+    # também tenta se registrar e se não houver nenhum par, ele receberá um erro.
+    register-with-eureka: false
+    fetch-registry: false
+  instance:
+    appname: service-registry-cluster
+
+# Para evitar o log de erros, também definimos o Log com.netflix.eureka como OFF para um servidor único,
+# mas não definimos com OFF quando usarmos peering(espiando)
+logging:
+  level:
+    com.netflix.eureka: OFF
+    com.netflix.discovery: OFF

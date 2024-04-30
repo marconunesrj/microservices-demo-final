@@ -81,7 +81,7 @@ public class ElasticDocumentController {
     ResponseEntity<ElasticQueryServiceResponseModel>
     getDocumentById(@PathVariable @NotEmpty String id) {
         ElasticQueryServiceResponseModel elasticQueryServiceResponseModel = elasticQueryService.getDocumentById(id);
-        LOG.debug("Elasticsearch returned document with id {}", id);
+        LOG.debug("Elasticsearch returned document with id {} on port {}", id, port);
         return ResponseEntity.ok(elasticQueryServiceResponseModel);
     }
 
@@ -102,7 +102,7 @@ public class ElasticDocumentController {
     getDocumentByIdV2(@PathVariable @NotEmpty String id) {
         ElasticQueryServiceResponseModel elasticQueryServiceResponseModel = elasticQueryService.getDocumentById(id);
         ElasticQueryServiceResponseModelV2 responseModelV2 = getV2Model(elasticQueryServiceResponseModel);
-        LOG.debug("Elasticsearch returned document with id {}", id);
+        LOG.debug("Elasticsearch returned document with id {} on port {}", id, port);
         return ResponseEntity.ok(responseModelV2);
     }
 
