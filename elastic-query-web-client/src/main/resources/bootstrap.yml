@@ -18,3 +18,11 @@ eureka:
       # https://wiki.task.com.br/Configura%C3%A7%C3%B5es_do_arquivo_hosts
 #      defaultZone: http://discovery-service-1:8761/eureka/,http://discovery-service-2:8762/eureka/
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Duração de expiração da concessão para 5 segundos, o que significa que a cada 5 segundos,
+    # o cliente solicitará uma nova concessão do servidor Eureka.
+    lease-expiration-duration-in-seconds: 5
+    # Intervalo de renovação da concessão(locação) para 2 segundos, que é o intervalo de tempo para enviar
+    # a pulsação de cliente para o servidor Eureka. Deixe isso como padrão, que é de 30 segundos,
+    # para o ambiente de produção
+    lease-renewal-interval-in-seconds: 2
