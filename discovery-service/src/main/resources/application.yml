@@ -6,6 +6,19 @@ eureka:
   instance:
     # Cluster de registro de serviço
     appname: service-registry-cluster
+  server:
+    # enable-self-preservation: false -> informa a Eureka que, não tente recuperar se não obtiver uma pulsação
+    # de um cliente. Porque por padrão, Eureka é configurado para aguardar um tempo configurado antes de
+    # despejar o cliente para maior resiliência, como interrupção temporária de rede sempre pode acontecer.
+    # Então, ao definir esse modo de autopreservação como falso, forçamos Eureka a não tentar se recuperar, mas
+    # remova as instâncias, se elas não estiverem acessíveis.
+    # Nós então definimos o intervalo de remoção (eviction-interval-timer-in-ms) para 2 segundos, que é o intervalo
+    # em que as tarefas de remoção verificam as instâncias com aluguéis vencidos. Com esses valores, o
+    # serviço de descoberta verificará a acessibilidade dos serviços para cada 2 segundos e se não
+    # estiver acessível, elimine-o imediatamente.
+    enable-self-preservation: false
+    expected-client-renewal-interval-seconds: 3
+    eviction-interval-timer-in-ms: 2000
 
 spring:
   cloud:

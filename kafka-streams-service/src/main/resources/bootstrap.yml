@@ -14,9 +14,18 @@ spring:
       username: spring_cloud_user
       # Mesma informação no arquivo bootstrap.yml do módulo: config-server
       password: '{cipher}666f0899a1a920994d5c31e775c77f90f4bbf381c1ad82c46f9028f1899b901785a5ec4212d935cacbfe9187b68a5f52'
+# https://www.baeldung.com/eureka-self-preservation-renewal
 eureka:
   client:
     serviceUrl:
       # https://wiki.task.com.br/Configura%C3%A7%C3%B5es_do_arquivo_hosts
 #      defaultZone: http://discovery-service-1:8761/eureka/,http://discovery-service-2:8762/eureka/
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Duração de expiração da concessão para 5 segundos, o que significa que a cada 5 segundos,
+    # o cliente solicitará uma nova concessão do servidor Eureka.
+    lease-expiration-duration-in-seconds: 5
+    # Intervalo de renovação da concessão(locação) para 2 segundos, que é o intervalo de tempo para enviar
+    # a pulsação de cliente para o servidor Eureka. Deixe isso como padrão, que é de 30 segundos,
+    # para o ambiente de produção
+    lease-renewal-interval-in-seconds: 2

@@ -1,23 +1,20 @@
 spring:
   application:
-    name: analytics-service
+    name: gateway-service
   profiles:
-    active: analytics
+    active: gateway
   cloud:
     config:
-      name: analytics-service,config-client
+      name: gateway-service,config-client
       uri: http://localhost:8888
       username: spring_cloud_user
       # Mesma informação no arquivo bootstrap.yml do módulo: config-server
       password: '{cipher}666f0899a1a920994d5c31e775c77f90f4bbf381c1ad82c46f9028f1899b901785a5ec4212d935cacbfe9187b68a5f52'
 #      password: '{cipher}2ca52e09ec85aa620abce2e704242985bf786c9a684461b023a563b34b96c527ec81160eae48d731017c98ee0b9e1824'
 
-# https://www.baeldung.com/eureka-self-preservation-renewal
 eureka:
   client:
     serviceUrl:
-      # https://wiki.task.com.br/Configura%C3%A7%C3%B5es_do_arquivo_hosts
-#      defaultZone: http://discovery-service-1:8761/eureka/,http://discovery-service-2:8762/eureka/
       defaultZone: http://localhost:8761/eureka/
   instance:
     # Duração de expiração da concessão para 5 segundos, o que significa que a cada 5 segundos,
