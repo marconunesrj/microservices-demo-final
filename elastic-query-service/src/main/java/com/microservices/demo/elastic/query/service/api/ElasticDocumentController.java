@@ -128,7 +128,7 @@ public class ElasticDocumentController {
     getDocumentByText(@RequestBody @Valid ElasticQueryServiceRequestModel elasticQueryServiceRequestModel,
                       @AuthenticationPrincipal TwitterQueryUser principal,
                       @RegisteredOAuth2AuthorizedClient("keycloak")
-                      OAuth2AuthorizedClient oAuth2AuthorizedClient) {
+                              OAuth2AuthorizedClient oAuth2AuthorizedClient) {
         LOG.info("User {} querying documents for text {}", principal.getUsername(),
                 elasticQueryServiceRequestModel.getText());
 

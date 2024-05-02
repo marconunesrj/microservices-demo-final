@@ -1,0 +1,36 @@
+# https://medium.com/simform-engineering/revolutionize-monitoring-empowering-spring-boot-applications-with-prometheus-and-grafana-e99c5c7248cf
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 1m
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'grafana'
+    scrape_interval: 1m
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['grafana:3000']
+  - job_name: 'gateway-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:9092']
+  - job_name: 'elastic-query-service-1'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8183']
+  - job_name: 'elastic-query-service-2'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: [ 'host.docker.internal:8186' ]
+  - job_name: 'kafka-streams-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8187']
+  - job_name: 'analytics-service'
+    scrape_interval: 1m
+    metrics_path: '/actuator/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8188']
