@@ -18,7 +18,7 @@ services:
       test: nc -z localhost 2181 || exit -1
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 15
       start_period: 10s
     networks:
       - ${GLOBAL_NETWORK:-kafka}

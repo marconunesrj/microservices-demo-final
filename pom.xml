@@ -24,7 +24,7 @@
 		<module>elastic-query-web-client-2</module>
 		<module>kafka-streams-service</module>
 		<module>analytics-service</module>
-        	<module>discovery-service</module>
+        <module>discovery-service</module>
 		<module>gateway-service</module>
 	</modules>
 	<parent>
@@ -65,6 +65,10 @@
 		<kafka-avro-serializer.version>5.5.1</kafka-avro-serializer.version>
 		<kafka-streams-avro-serde.version>5.5.1</kafka-streams-avro-serde.version>
 		<avro.version>1.10.0</avro.version>
+
+		<micrometer-registry-prometheus.version>1.5.2</micrometer-registry-prometheus.version>
+
+		<logstash-logback-encoder.version>6.5</logstash-logback-encoder.version>
 
 	</properties>
 
@@ -331,6 +335,12 @@
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>${postgresql.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.micrometer</groupId>
+				<artifactId>micrometer-registry-prometheus</artifactId>
+				<version>${micrometer-registry-prometheus.version}</version>
 			</dependency>
 
 			<!--

@@ -1,11 +1,12 @@
 # Running the application com Docker e por dentro do Projeto 
 - Please enter the correct credentials in twitter4j.properties file.
 - Then go to docker-compose folder and run:
-     - docker-compose -f keycloak_authorization_server.yml up -d
-     - docker-compose -f common.yml -f elastic_cluster.yml -f kafka_cluster.yml up -d
+     - docker-compose -f keycloak_authorization_server.yml -f common.yml -f elastic_cluster.yml -f kafka_cluster.yml -f redis_cluster.yml -f monitoring_local.yml up -d
 
 - Then run the microservices in the following order:
-     - config-server
+     - ConfigServer
+     - DiscoveryService
+     - GatewayService
      - TwitterToKafkaService
      - KafkaToElasticService
      - Then run one of the two implementations below
@@ -14,6 +15,8 @@
        - or
        - ReactiveElasticQueryService
        - ReactiveElasticQueryWebClient    http://localhost:8184/reactive-elastic-query-web-client/
+     - KafkaStreamsService
+     - AnalyticsService
 
 # Running the application somente pelo Docker
 - Please enter the correct credentials in twitter4j.properties file.
@@ -56,3 +59,13 @@ for microservice, twitter-to-kafka-service
 
 # Spring Data Elasticsearch
 - https://docs.spring.io/spring-data/elasticsearch/reference/elasticsearch/object-mapping.html
+
+# Eureka
+- http://localhost:8761/
+
+# Prometheus
+- http://localhost:9090/targets
+
+# Grafana (admin/admin)
+- http://localhost:3000
+- Criar Datasource URL: http://localhost:9090 Access: Browser
